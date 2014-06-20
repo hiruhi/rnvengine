@@ -1058,7 +1058,7 @@ Elm.Engine.Background.make = function (_elm) {
          {case "_Tuple2":
             return _U.cmp(0,_v0._0) < 1;}
          _E.Case($moduleName,
-         "on line 34, column 22 to 28");
+         "on line 37, column 22 to 28");
       }();
    };
    var chooseForm = function (_v4) {
@@ -1079,8 +1079,12 @@ Elm.Engine.Background.make = function (_elm) {
                  front);
               }();}
          _E.Case($moduleName,
-         "between lines 28 and 32");
+         "between lines 31 and 35");
       }();
+   };
+   var cycle = function (lst) {
+      return _L.append(lst,
+      List.tail(List.reverse(List.tail(lst))));
    };
    var halfFpsNum = Engine.Config.fpsNum / 2;
    var imgToElement = F2(function (dict,
@@ -1107,10 +1111,10 @@ Elm.Engine.Background.make = function (_elm) {
                     return _U.cmp(_v8._1,
                       1) < 1 ? -1 : Basics.max(-1)(count - 1);}
                  _E.Case($moduleName,
-                 "between lines 23 and 26");
+                 "between lines 26 and 29");
               }();}
          _E.Case($moduleName,
-         "between lines 23 and 26");
+         "between lines 26 and 29");
       }();
    });
    var ClearCanvas = function (a) {
@@ -1128,11 +1132,11 @@ Elm.Engine.Background.make = function (_elm) {
          {case "ClearCanvas":
             return _L.fromArray([Graphics.Collage.toForm(Graphics.Element.empty)]);
             case "NewImageSet":
-            return A2(List.map,
+            return cycle(A2(List.map,
               imgToElement(dict),
-              c._0);}
+              c._0));}
          _E.Case($moduleName,
-         "between lines 18 and 20");
+         "between lines 21 and 23");
       }();
    });
    var backgroundForm = F5(function (clickAnim,
@@ -1202,6 +1206,7 @@ Elm.Engine.Background.make = function (_elm) {
    _elm.Engine.Background.values = {_op: _op
                                    ,imgToElement: imgToElement
                                    ,halfFpsNum: halfFpsNum
+                                   ,cycle: cycle
                                    ,images: images
                                    ,counter: counter
                                    ,chooseForm: chooseForm

@@ -13,11 +13,14 @@ data CounterCommand = ClearCounter
 
 imgToElement dict info  = D.getOrFail info.url dict
 
-halfFpsNum = fpsNum / 2                                                   
+halfFpsNum = fpsNum / 2                   
+
+
+cycle lst = lst ++ (tail <| reverse <| tail lst)
 
 images dict c = case c of
              ClearCanvas d -> [toForm empty]
-             NewImageSet sets -> map (imgToElement dict) sets
+             NewImageSet sets -> cycle <| map (imgToElement dict) sets
 
 counter (c,numOfImages) count =
   case c of
