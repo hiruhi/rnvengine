@@ -1058,7 +1058,7 @@ Elm.Engine.Background.make = function (_elm) {
          {case "_Tuple2":
             return _U.cmp(0,_v0._0) < 1;}
          _E.Case($moduleName,
-         "on line 37, column 22 to 28");
+         "on line 36, column 22 to 28");
       }();
    };
    var chooseForm = function (_v4) {
@@ -1079,12 +1079,13 @@ Elm.Engine.Background.make = function (_elm) {
                  front);
               }();}
          _E.Case($moduleName,
-         "between lines 31 and 35");
+         "between lines 30 and 34");
       }();
    };
    var cycle = function (lst) {
-      return _L.append(lst,
-      List.tail(List.reverse(List.tail(lst))));
+      return _U.cmp(List.length(lst),
+      2) > -1 ? _L.append(lst,
+      List.tail(List.reverse(List.tail(lst)))) : lst;
    };
    var halfFpsNum = Engine.Config.fpsNum / 2;
    var imgToElement = F2(function (dict,
@@ -1111,10 +1112,10 @@ Elm.Engine.Background.make = function (_elm) {
                     return _U.cmp(_v8._1,
                       1) < 1 ? -1 : Basics.max(-1)(count - 1);}
                  _E.Case($moduleName,
-                 "between lines 26 and 29");
+                 "between lines 25 and 28");
               }();}
          _E.Case($moduleName,
-         "between lines 26 and 29");
+         "between lines 25 and 28");
       }();
    });
    var ClearCanvas = function (a) {
@@ -1136,7 +1137,7 @@ Elm.Engine.Background.make = function (_elm) {
               imgToElement(dict),
               c._0));}
          _E.Case($moduleName,
-         "between lines 21 and 23");
+         "between lines 20 and 22");
       }();
    });
    var backgroundForm = F5(function (clickAnim,
