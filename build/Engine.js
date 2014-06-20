@@ -166,6 +166,7 @@ Elm.Engine.make = function (_elm) {
    $moduleName = "Engine";
    var Basics = Elm.Basics.make(_elm);
    var Color = Elm.Color.make(_elm);
+   var Debug = Elm.Debug.make(_elm);
    var Dict = Elm.Dict.make(_elm);
    var Engine = Engine || {};
    Engine.Background = Elm.Engine.Background.make(_elm);
@@ -205,13 +206,19 @@ Elm.Engine.make = function (_elm) {
    var render = F3(function (canvas,
    fading,
    elements) {
-      return Graphics.Element.layers({ctor: "::"
-                                     ,_0: A2(Graphics.Element.spacer,
-                                     canvas.width,
-                                     canvas.height)
-                                     ,_1: A2(List.map,
-                                     Graphics.Element.opacity(fading),
-                                     elements)});
+      return function () {
+         var h = Basics.toFloat(canvas.height);
+         var hh = h * 0.5;
+         var w = Basics.toFloat(canvas.width);
+         var hw = w * 0.5;
+         var bs = Graphics.Collage.alpha(fading)(Graphics.Collage.filled(Color.black)(A2(Graphics.Collage.rect,
+         w,
+         h)));
+         return A2(Graphics.Collage.collage,
+         canvas.width,
+         canvas.height)(_L.append(elements,
+         _L.fromArray([bs])));
+      }();
    });
    var createHiddenScreen = function (dict) {
       return Dict.values(dict);
@@ -227,9 +234,10 @@ Elm.Engine.make = function (_elm) {
             case "Nothing":
             return A3(Dict.insert,
               img.url,
-              Graphics.Element.opacity(0.0)(A3(Graphics.Element.fittedImage,
+              Graphics.Collage.form(A4(Graphics.Collage.FImage,
               img.width,
               img.height,
+              {ctor: "_Tuple2",_0: 0,_1: 0},
               img.url)),
               dict);}
          _E.Case($moduleName,
@@ -263,7 +271,7 @@ Elm.Engine.make = function (_elm) {
                               ,["clickCount",0]],
               s);}
          _E.Case($moduleName,
-         "between lines 65 and 67");
+         "between lines 66 and 68");
       }();
    };
    var initialInterpreterState = {_: {}
@@ -383,7 +391,7 @@ Elm.Engine.make = function (_elm) {
                                                 ,c._0]],
               s));}
          _E.Case($moduleName,
-         "between lines 70 and 79");
+         "between lines 71 and 80");
       }();
    });
    var VisibleObject = F2(function (a,
@@ -497,18 +505,25 @@ Elm.Engine.make = function (_elm) {
    fadeOut,
    clearCanvas,
    clock)),
-   Signal.combine(_L.fromArray([A5(Engine.Background.backgroundForm,
-                               clickAnim,
-                               clearCanvas,
-                               Gamepad.face1button,
-                               clock,
-                               changeDict)
-                               ,A5(Engine.VisualObjects.visualObjectsLayer,
-                               showPicts,
-                               changePict,
-                               clearCanvas,
-                               changeDict,
-                               canvasSize)])));
+   A2(Signal._op["~"],
+   A2(Signal._op["<~"],
+   F2(function (x,y) {
+      return {ctor: "::"
+             ,_0: x
+             ,_1: y};
+   }),
+   A5(Engine.Background.backgroundForm,
+   clickAnim,
+   clearCanvas,
+   Gamepad.face1button,
+   clock,
+   changeDict)),
+   A5(Engine.VisualObjects.visualObjectsLayer,
+   showPicts,
+   changePict,
+   clearCanvas,
+   canvasSize,
+   changeDict)));
    var newScript = Native.Ports.portIn("newScript",
    Native.Ports.incomingSignal(function (v) {
       return _U.isJSArray(v) ? _L.fromArray(v.map(function (v) {
@@ -629,7 +644,7 @@ Elm.Engine.FadeOut.make = function (_elm) {
    };
    var initialState = {_: {}
                       ,count: 0
-                      ,efun: Basics.always(1.0)};
+                      ,efun: Basics.always(0.0)};
    var State = F2(function (a,b) {
       return {_: {}
              ,count: a
@@ -657,8 +672,8 @@ Elm.Engine.FadeOut.make = function (_elm) {
                                    ,efun: A5(Easing.ease,
                                    Easing.linear,
                                    Easing.number,
-                                   0.0,
                                    1.0,
+                                   0.0,
                                    Basics.toFloat(e._0 * Engine.Config.fpsNum))};}
          _E.Case($moduleName,
          "between lines 13 and 16");
@@ -1019,7 +1034,6 @@ Elm.Engine.Background.make = function (_elm) {
    $moduleName = "Engine.Background";
    var Basics = Elm.Basics.make(_elm);
    var Color = Elm.Color.make(_elm);
-   var Debug = Elm.Debug.make(_elm);
    var Dict = Elm.Dict.make(_elm);
    var Engine = Engine || {};
    Engine.Config = Elm.Engine.Config.make(_elm);
@@ -1044,7 +1058,7 @@ Elm.Engine.Background.make = function (_elm) {
          {case "_Tuple2":
             return _U.cmp(0,_v0._0) < 1;}
          _E.Case($moduleName,
-         "on line 35, column 22 to 28");
+         "on line 34, column 22 to 28");
       }();
    };
    var chooseForm = function (_v4) {
@@ -1060,49 +1074,43 @@ Elm.Engine.Background.make = function (_elm) {
                  var front = List.head(A2(List.drop,
                  ind,
                  _v4._1));
-                 return A2(Graphics.Element.opacity,
+                 return A2(Graphics.Collage.alpha,
                  1.0,
                  front);
               }();}
          _E.Case($moduleName,
-         "between lines 29 and 33");
+         "between lines 28 and 32");
       }();
    };
    var halfFpsNum = Engine.Config.fpsNum / 2;
    var imgToElement = F2(function (dict,
    info) {
-      return function () {
-         var _v8 = A2(Dict.get,
-         info.url,
-         dict);
-         switch (_v8.ctor)
-         {case "Just": return _v8._0;}
-         _E.Case($moduleName,
-         "on line 15, column 27 to 72");
-      }();
+      return A2(Dict.getOrFail,
+      info.url,
+      dict);
    });
    var Click = {ctor: "Click"};
    var Clock = {ctor: "Clock"};
    var ClearCounter = {ctor: "ClearCounter"};
-   var counter = F2(function (_v10,
+   var counter = F2(function (_v8,
    count) {
       return function () {
-         switch (_v10.ctor)
+         switch (_v8.ctor)
          {case "_Tuple2":
             return function () {
-                 switch (_v10._0.ctor)
+                 switch (_v8._0.ctor)
                  {case "ClearCounter": return 0;
                     case "Click":
-                    return _U.cmp(_v10._1,
+                    return _U.cmp(_v8._1,
                       1) < 1 ? count : count + halfFpsNum;
                     case "Clock":
-                    return _U.cmp(_v10._1,
+                    return _U.cmp(_v8._1,
                       1) < 1 ? -1 : Basics.max(-1)(count - 1);}
                  _E.Case($moduleName,
-                 "between lines 24 and 27");
+                 "between lines 23 and 26");
               }();}
          _E.Case($moduleName,
-         "between lines 24 and 27");
+         "between lines 23 and 26");
       }();
    });
    var ClearCanvas = function (a) {
@@ -1113,29 +1121,30 @@ Elm.Engine.Background.make = function (_elm) {
       return {ctor: "NewImageSet"
              ,_0: a};
    };
-   var images = F2(function (d,c) {
+   var images = F2(function (dict,
+   c) {
       return function () {
          switch (c.ctor)
          {case "ClearCanvas":
-            return _L.fromArray([Graphics.Element.empty]);
+            return _L.fromArray([Graphics.Collage.toForm(Graphics.Element.empty)]);
             case "NewImageSet":
             return A2(List.map,
-              imgToElement(d),
+              imgToElement(dict),
               c._0);}
          _E.Case($moduleName,
-         "between lines 19 and 21");
+         "between lines 18 and 20");
       }();
    });
    var backgroundForm = F5(function (clickAnim,
    clearCanvas,
    face1down,
    clock,
-   dict) {
+   changeDict) {
       return function () {
          var imageSet = A2(Signal._op["~"],
          A2(Signal._op["<~"],
          images,
-         dict),
+         changeDict),
          Signal.merges(_L.fromArray([A2(Signal._op["<~"],
                                     ClearCanvas,
                                     clearCanvas)
@@ -1159,14 +1168,17 @@ Elm.Engine.Background.make = function (_elm) {
                                                   face1down))
                                                   ,A2(Signal._op["<~"],
                                                   Basics.always(Clock),
-                                                  clock)]));
+                                                  clock)
+                                                  ,A2(Signal._op["<~"],
+                                                  Basics.always(ClearCounter),
+                                                  changeDict)]));
          return A2(Signal._op["<~"],
          chooseForm,
          A2(Signal.keepIf,
          shouldRender,
          {ctor: "_Tuple2"
          ,_0: -1
-         ,_1: _L.fromArray([Graphics.Element.empty])})(A2(Signal._op["~"],
+         ,_1: _L.fromArray([Graphics.Collage.toForm(Graphics.Element.empty)])})(A2(Signal._op["~"],
          A2(Signal._op["<~"],
          F2(function (v0,v1) {
             return {ctor: "_Tuple2"
@@ -1202,41 +1214,6 @@ Elm.Engine.Background.make = function (_elm) {
                                    ,Click: Click};
    return _elm.Engine.Background.values;
 };Elm.Engine = Elm.Engine || {};
-Elm.Engine.Config = Elm.Engine.Config || {};
-Elm.Engine.Config.make = function (_elm) {
-   "use strict";
-   _elm.Engine = _elm.Engine || {};
-   _elm.Engine.Config = _elm.Engine.Config || {};
-   if (_elm.Engine.Config.values)
-   return _elm.Engine.Config.values;
-   var _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _A = _N.Array.make(_elm),
-   _E = _N.Error.make(_elm),
-   $moduleName = "Engine.Config";
-   var Basics = Elm.Basics.make(_elm);
-   var Color = Elm.Color.make(_elm);
-   var Graphics = Graphics || {};
-   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
-   var Graphics = Graphics || {};
-   Graphics.Element = Elm.Graphics.Element.make(_elm);
-   var List = Elm.List.make(_elm);
-   var Maybe = Elm.Maybe.make(_elm);
-   var Native = Native || {};
-   Native.Json = Elm.Native.Json.make(_elm);
-   var Native = Native || {};
-   Native.Ports = Elm.Native.Ports.make(_elm);
-   var Signal = Elm.Signal.make(_elm);
-   var String = Elm.String.make(_elm);
-   var Text = Elm.Text.make(_elm);
-   var Time = Elm.Time.make(_elm);
-   var _op = {};
-   var fpsNum = 20;
-   _elm.Engine.Config.values = {_op: _op
-                               ,fpsNum: fpsNum};
-   return _elm.Engine.Config.values;
-};Elm.Engine = Elm.Engine || {};
 Elm.Engine.VisualObjects = Elm.Engine.VisualObjects || {};
 Elm.Engine.VisualObjects.make = function (_elm) {
    "use strict";
@@ -1254,6 +1231,8 @@ Elm.Engine.VisualObjects.make = function (_elm) {
    var Bitwise = Elm.Bitwise.make(_elm);
    var Color = Elm.Color.make(_elm);
    var Dict = Elm.Dict.make(_elm);
+   var Engine = Engine || {};
+   Engine.CanvasImage = Elm.Engine.CanvasImage.make(_elm);
    var Graphics = Graphics || {};
    Graphics.Collage = Elm.Graphics.Collage.make(_elm);
    var Graphics = Graphics || {};
@@ -1274,23 +1253,21 @@ Elm.Engine.VisualObjects.make = function (_elm) {
    e,
    lst) {
       return {ctor: "::"
-             ,_0: Graphics.Collage.moveX(A2(Dict.getOrFail,
-             name,
-             moves))(Graphics.Collage.toForm(e))
+             ,_0: A2(Graphics.Collage.moveX,
+             A2(Dict.getOrFail,name,moves),
+             e)
              ,_1: lst};
    });
    var makeLayer = function (s) {
-      return A2(Graphics.Collage.collage,
-      s.canvasSize.width,
-      s.canvasSize.height)(A3(Dict.foldr,
+      return A3(Dict.foldr,
       moveForms(s.moves),
       _L.fromArray([]),
-      s.vo));
+      s.vo);
    };
    var imgToElement = F2(function (dict,
-   img) {
+   x) {
       return A2(Dict.getOrFail,
-      img.imageInfo.url,
+      x.imageInfo.url,
       dict);
    });
    var initialState = {_: {}
@@ -1305,8 +1282,8 @@ Elm.Engine.VisualObjects.make = function (_elm) {
    c,
    d) {
       return {_: {}
-             ,canvasSize: d
-             ,dict: c
+             ,canvasSize: c
+             ,dict: d
              ,moves: a
              ,vo: b};
    });
@@ -1386,14 +1363,14 @@ Elm.Engine.VisualObjects.make = function (_elm) {
                  s);
               }();}
          _E.Case($moduleName,
-         "between lines 22 and 32");
+         "between lines 24 and 34");
       }();
    });
    var visualObjectsLayer = F5(function (showPicts,
    changePict,
    clearCanvas,
-   changeDict,
-   canvasSize) {
+   canvasSize,
+   changeDict) {
       return A2(Signal._op["<~"],
       makeLayer,
       A2(Signal.foldp,
@@ -1408,11 +1385,11 @@ Elm.Engine.VisualObjects.make = function (_elm) {
                                                ClearCanvas,
                                                clearCanvas)
                                                ,A2(Signal._op["<~"],
-                                               ChangeDict,
-                                               changeDict)
-                                               ,A2(Signal._op["<~"],
                                                CanvasSize,
-                                               canvasSize)]))));
+                                               canvasSize)
+                                               ,A2(Signal._op["<~"],
+                                               ChangeDict,
+                                               changeDict)]))));
    });
    _elm.Engine.VisualObjects.values = {_op: _op
                                       ,initialState: initialState
@@ -1428,6 +1405,85 @@ Elm.Engine.VisualObjects.make = function (_elm) {
                                       ,CanvasSize: CanvasSize
                                       ,State: State};
    return _elm.Engine.VisualObjects.values;
+};Elm.Engine = Elm.Engine || {};
+Elm.Engine.CanvasImage = Elm.Engine.CanvasImage || {};
+Elm.Engine.CanvasImage.make = function (_elm) {
+   "use strict";
+   _elm.Engine = _elm.Engine || {};
+   _elm.Engine.CanvasImage = _elm.Engine.CanvasImage || {};
+   if (_elm.Engine.CanvasImage.values)
+   return _elm.Engine.CanvasImage.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "Engine.CanvasImage";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var canvasImage = F4(function (w,
+   h,
+   pos,
+   url) {
+      return Graphics.Collage.form(A4(Graphics.Collage.FImage,
+      w,
+      h,
+      pos,
+      url));
+   });
+   _elm.Engine.CanvasImage.values = {_op: _op
+                                    ,canvasImage: canvasImage};
+   return _elm.Engine.CanvasImage.values;
+};Elm.Engine = Elm.Engine || {};
+Elm.Engine.Config = Elm.Engine.Config || {};
+Elm.Engine.Config.make = function (_elm) {
+   "use strict";
+   _elm.Engine = _elm.Engine || {};
+   _elm.Engine.Config = _elm.Engine.Config || {};
+   if (_elm.Engine.Config.values)
+   return _elm.Engine.Config.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "Engine.Config";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var fpsNum = 20;
+   _elm.Engine.Config.values = {_op: _op
+                               ,fpsNum: fpsNum};
+   return _elm.Engine.Config.values;
 };Elm.Gamepad = Elm.Gamepad || {};
 Elm.Gamepad.make = function (_elm) {
    "use strict";

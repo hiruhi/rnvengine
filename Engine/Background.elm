@@ -3,7 +3,6 @@ module Engine.Background where
 import Dict as D
 import Engine.Config (..)
 import Color as Color
-import Engine.CanvasImage (canvasImage)
 
 data ImageCommand = NewImageSet [{url:String, width: Int, height: Int}]
                   | ClearCanvas {width:Int, height:Int}
@@ -12,14 +11,13 @@ data CounterCommand = ClearCounter
                     | Clock
                     | Click
 
--- imgToElement dict info  = case D.get info.url dict of Just form -> form
-imgToElement info = canvasImage info.width info.height (0,0) info.url
+imgToElement dict info  = D.getOrFail info.url dict
 
 halfFpsNum = fpsNum / 2                                                   
 
-images c = case c of
+images dict c = case c of
              ClearCanvas d -> [toForm empty]
-             NewImageSet sets -> map imgToElement sets
+             NewImageSet sets -> map (imgToElement dict) sets
 
 counter (c,numOfImages) count =
   case c of
@@ -35,8 +33,8 @@ chooseForm (s,imgs) = let count = max s  0
 
 shouldRender (x,y) = 0 <= x
   
-backgroundForm clickAnim clearCanvas face1down clock =
-  let aSignal = merges [always ClearCounter <~ clickAnim, always ClearCounter <~ clearCanvas, always Click <~ keepIf id False face1down, always Clock <~ clock] 
-      imageSet = images <~ merges [ClearCanvas <~ clearCanvas, NewImageSet <~ clickAnim]
+backgroundForm clickAnim clearCanvas face1down clock changeDict =
+  let aSignal = merges [always ClearCounter <~ clickAnim, always ClearCounter <~ clearCanvas, always Click <~ keepIf id False face1down, always Clock <~ clock, always ClearCounter <~ changeDict] 
+      imageSet = images <~ changeDict ~ merges [ClearCanvas <~ clearCanvas, NewImageSet <~ clickAnim]
       imageSetSize = length <~ imageSet
   in chooseForm <~ (keepIf shouldRender (-1,[toForm empty]) <| (,) <~ (foldp counter -1 <| (,) <~ aSignal ~ imageSetSize) ~ imageSet)

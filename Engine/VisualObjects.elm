@@ -8,17 +8,17 @@ import Engine.CanvasImage (..)
 data Event = ShowPicts [{name: String, imageInfo: {url: String, width: Int, height: Int}}]
            | ChangePict {name: String, imageInfo: {url: String, width: Int, height: Int}}
            | ClearCanvas {width:Int, height:Int}
+           | ChangeDict (D.Dict String Form)
            | CanvasSize {width: Int, height: Int}
 
 
-type State = {moves: D.Dict String Float, vo: D.Dict String Form, canvasSize: {width:Int, height:Int}}
+type State = {moves: D.Dict String Float, vo: D.Dict String Form, canvasSize: {width:Int, height:Int}, dict: D.Dict String Form}
 
 initialState : State
-initialState = {moves=D.empty, vo=D.empty, canvasSize={width=0, height=0}}
+initialState = {moves=D.empty, vo=D.empty, canvasSize={width=0, height=0}, dict=D.empty}
 
 
-imgToElement x = let info = x.imageInfo in
-                 canvasImage info.width info.height (0,0) info.url
+imgToElement dict x = D.getOrFail x.imageInfo.url dict
 
 makeVisualObjects c s = 
     case c of
@@ -29,13 +29,14 @@ makeVisualObjects c s =
                            poslstseed = repeat (length names - 1) step
                            poslst = map (\x -> x - (toFloat <| s.canvasSize.width `shiftRight` 1)) <| scanl (\x y -> x + y) step poslstseed  
                            newMoves = D.fromList <| zip names poslst in
-                       {s | moves <- newMoves, vo <- D.fromList <| zip names <| map imgToElement lst}
-      ChangePict p -> {s | vo <- D.insert p.name (imgToElement p) s.vo }
+                       {s | moves <- newMoves, vo <- D.fromList <| zip names <| map (imgToElement s.dict) lst}
+      ChangePict p -> {s | vo <- D.insert p.name (imgToElement s.dict p) s.vo }
+      ChangeDict d -> {s | dict <- d}
 
 
 moveForms moves name e lst = (moveX (D.getOrFail name moves) e) :: lst
 
 makeLayer s = D.foldr (moveForms s.moves) [] s.vo
 
-visualObjectsLayer showPicts changePict clearCanvas canvasSize = 
-    makeLayer <~ (foldp makeVisualObjects initialState <| merges [ShowPicts <~ showPicts, ChangePict <~ changePict, ClearCanvas <~ clearCanvas, CanvasSize <~ canvasSize])
+visualObjectsLayer showPicts changePict clearCanvas canvasSize changeDict = 
+    makeLayer <~ (foldp makeVisualObjects initialState <| merges [ShowPicts <~ showPicts, ChangePict <~ changePict, ClearCanvas <~ clearCanvas, CanvasSize <~ canvasSize, ChangeDict <~ changeDict])

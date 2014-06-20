@@ -95,11 +95,11 @@ checkAndLoad img dict =
 
 load lst dict = foldr (\e d -> if e.url == "" then d else checkAndLoad e d) dict lst
 
--- changeDict : Signal (D.Dict String Form)
--- changeDict = foldp load D.empty preloadImages
+changeDict : Signal (D.Dict String Form)
+changeDict = foldp load D.empty preloadImages
 
--- createHiddenScreen dict = D.values dict
--- hiddenScreen = createHiddenScreen <~ changeDict
+createHiddenScreen dict = D.values dict
+hiddenScreen = createHiddenScreen <~ changeDict
 
 render canvas fading elements = 
     let w = toFloat canvas.width
@@ -109,7 +109,7 @@ render canvas fading elements =
         bs = alpha fading <| filled Color.black <| rect w h
     in collage canvas.width canvas.height <| elements ++ [bs]
 
-main = render <~ canvasSize ~ (fadingEffect fadeOut clearCanvas clock) ~ ((::) <~ backgroundForm clickAnim clearCanvas P.face1button clock  ~ visualObjectsLayer showPicts changePict clearCanvas canvasSize)
+main = render <~ canvasSize ~ (fadingEffect fadeOut clearCanvas clock) ~ ((::) <~ backgroundForm clickAnim clearCanvas P.face1button clock changeDict ~ visualObjectsLayer showPicts changePict clearCanvas canvasSize changeDict)
 
 port jumpRequest : Signal Bool
 port jumpRequest = keepIf id False P.face2button
