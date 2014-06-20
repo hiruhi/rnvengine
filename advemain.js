@@ -31,7 +31,7 @@ window.onload=function(){
 		    alert('failed to load ' + preloads[i].url);
 		}
 		img.onload=function(){
-		    tempspace.append($("<div>").css('background-image', "url(" + preloads[i].url + ")"));
+//		    tempspace.append($("<div>").css('background-image', "url(" + preloads[i].url + ")"));
 		    preloadImages(preloads,i+1,lim);
 		};
 		img.src=preloads[i].url;
