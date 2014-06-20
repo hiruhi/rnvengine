@@ -1,5 +1,5 @@
 window.onload=function(){
-    $("#hiddenplace").load(scenariofile,null,function(){
+    $("<div>").load(scenariofile,null,function(){
 	var dummyCP = {'name': "", 'imageInfo': {'url': "", 'width':0, 'height':0}}
 	$("#gamescreen:first").each(function(index,domElm){
 	    engine=Elm.embed(Elm.Engine, domElm, {newScript: [], clickAnim: [], showPicts: [],changePict: dummyCP, fadeOut: 0, proceedRequest: false, canvasSize: {width: 0, height:0}, isModal: false, preloadImages: [], clearCanvas: {width:WIDTH, height:HEIGHT}, loading: true, face1direct: false, shaking: false});
@@ -10,12 +10,10 @@ window.onload=function(){
 	thisScript=scenariofile;
 	thisSection="#begin";
 	var maincode = expandMacro(scriptview.text()).replace(/｜([^《]+)《([^》]+)》/g,'<ruby>$1<rp>(</rp><rt>$2</rt><rp>)</rp></ruby>').replace(/ｖ/g,"<span style='color:red'>&hearts;</span>").split("\n");
+	console.log(maincode);
 	scriptview.empty();
 
-	var body = $("body");
-	var backloadarea=$("<div>");
-	backloadarea.css('visibility',"hidden");
-	body.append(backloadarea);
+	var tempspace=$("#hiddenplace");
 
 	function task(){
 	    engine.ports.canvasSize.send({width: WIDTH, height: HEIGHT});
@@ -34,7 +32,7 @@ window.onload=function(){
 		    alert('failed to load ' + preloads[i].url);
 		}
 		img.onload=function(){
-		    backloadarea.append($("<div>").css('background-image', "url(" + preloads[i].url + ")"));
+		    tempspace.append($("<div>").css('background-image', "url(" + preloads[i].url + ")"));
 		    preloadImages(preloads,i+1,lim);
 		};
 		img.src=preloads[i].url;

@@ -170,11 +170,11 @@ function gotoScript(file,id){
     thisScript=file;
     thisSection=id;
     if(typeof id == 'undefined') id="#begin"
-    $("#hiddenplace").load(file,null,function(){
-	var scriptview = $(id);
+    $("<div>").load(file,null,function(){
+	var scriptview = $(id, this);
 	var code=expandMacro(scriptview.text()).replace(/｜([^《]+)《([^》]+)》/g,'<ruby>$1<rp>(</rp><rt>$2</rt><rp>)</rp></ruby>').replace(/ｖ/g,"<span style='color:red'>&hearts;</span>").split("\n");
-	scriptview.empty();
 	engine.ports.newScript.send(code);
+	scriptview.empty();
     });
 }
 
