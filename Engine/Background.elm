@@ -15,11 +15,9 @@ imgToElement dict info  = D.getOrFail info.url dict
 
 halfFpsNum = fpsNum / 2                   
 
-cycle lst = if length lst >= 2 then lst ++ (tail <| reverse <| tail lst) else lst
-
 images dict c = case c of
              ClearCanvas d -> [toForm empty]
-             NewImageSet sets -> cycle <| map (imgToElement dict) sets
+             NewImageSet sets -> map (imgToElement dict) sets
 
 counter (c,numOfImages) count =
   case c of

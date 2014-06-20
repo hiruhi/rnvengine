@@ -113,25 +113,27 @@ function interpretOneStep(t){
     }
 }
 
-function clickAnim(picts){
+function clickAnim(picts,cycled){
+    if(cycled == null) cycled = true;
     for(key in picts){
 	picts[key]=assets.images[picts[key]]
     }
-    engine.ports.clickAnim.send(picts);
+    engine.ports.cycledClickAnim.send([picts,cycled]);
     engine.ports.proceedRequest.send(true);
 }
 
-function clickAnimOnly(picts){
+function clickAnimOnly(picts,cycled){
+    if(cycled == null) cycled = true;
     hideScripts();
     for(key in picts){
 	picts[key]=assets.images[picts[key]]
     }
-    engine.ports.clickAnim.send(picts);
+    engine.ports.cycledClickAnim.send([picts,cycled]);
     engine.ports.isModal.send(true);
 }
 
 function show(f){
-    engine.ports.clickAnim.send([assets.images[f]]);
+    engine.ports.cycledClickAnim.send([[assets.images[f]],true]);
     engine.ports.proceedRequest.send(true);
 }
 

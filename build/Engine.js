@@ -241,7 +241,7 @@ Elm.Engine.make = function (_elm) {
               img.url)),
               dict);}
          _E.Case($moduleName,
-         "between lines 91 and 93");
+         "between lines 95 and 97");
       }();
    });
    var load = F2(function (lst,
@@ -271,7 +271,18 @@ Elm.Engine.make = function (_elm) {
                               ,["clickCount",0]],
               s);}
          _E.Case($moduleName,
-         "between lines 66 and 68");
+         "between lines 70 and 72");
+      }();
+   };
+   var cycling = function (_v5) {
+      return function () {
+         switch (_v5.ctor)
+         {case "_Tuple2":
+            return _v5._1 || _U.cmp(List.length(_v5._0),
+              2) < 0 ? _v5._0 : _L.append(_v5._0,
+              List.tail(List.reverse(List.tail(_v5._0))));}
+         _E.Case($moduleName,
+         "on line 65, column 19 to 92");
       }();
    };
    var initialInterpreterState = {_: {}
@@ -391,7 +402,7 @@ Elm.Engine.make = function (_elm) {
                                                 ,c._0]],
               s));}
          _E.Case($moduleName,
-         "between lines 71 and 80");
+         "between lines 75 and 84");
       }();
    });
    var VisibleObject = F2(function (a,
@@ -432,15 +443,20 @@ Elm.Engine.make = function (_elm) {
                                                                       ,width: typeof v.width === "number" ? v.width : _E.raise("invalid input, expecting JSNumber but got " + v.width)
                                                                       ,height: typeof v.height === "number" ? v.height : _E.raise("invalid input, expecting JSNumber but got " + v.height)} : _E.raise("invalid input, expecting JSObject [\"width\",\"height\"] but got " + v);
    }));
-   var clickAnim = Native.Ports.portIn("clickAnim",
+   var cycledClickAnim = Native.Ports.portIn("cycledClickAnim",
    Native.Ports.incomingSignal(function (v) {
-      return _U.isJSArray(v) ? _L.fromArray(v.map(function (v) {
-         return typeof v === "object" && "url" in v && "width" in v && "height" in v ? {_: {}
-                                                                                       ,url: typeof v.url === "string" || typeof v.url === "object" && v.url instanceof String ? v.url : _E.raise("invalid input, expecting JSString but got " + v.url)
-                                                                                       ,width: typeof v.width === "number" ? v.width : _E.raise("invalid input, expecting JSNumber but got " + v.width)
-                                                                                       ,height: typeof v.height === "number" ? v.height : _E.raise("invalid input, expecting JSNumber but got " + v.height)} : _E.raise("invalid input, expecting JSObject [\"url\",\"width\",\"height\"] but got " + v);
-      })) : _E.raise("invalid input, expecting JSArray but got " + v);
+      return _U.isJSArray(v) ? {ctor: "_Tuple2"
+                               ,_0: _U.isJSArray(v[0]) ? _L.fromArray(v[0].map(function (v) {
+                                  return typeof v === "object" && "url" in v && "width" in v && "height" in v ? {_: {}
+                                                                                                                ,url: typeof v.url === "string" || typeof v.url === "object" && v.url instanceof String ? v.url : _E.raise("invalid input, expecting JSString but got " + v.url)
+                                                                                                                ,width: typeof v.width === "number" ? v.width : _E.raise("invalid input, expecting JSNumber but got " + v.width)
+                                                                                                                ,height: typeof v.height === "number" ? v.height : _E.raise("invalid input, expecting JSNumber but got " + v.height)} : _E.raise("invalid input, expecting JSObject [\"url\",\"width\",\"height\"] but got " + v);
+                               })) : _E.raise("invalid input, expecting JSArray but got " + v[0])
+                               ,_1: typeof v[1] === "boolean" ? v[1] : _E.raise("invalid input, expecting JSBoolean but got " + v[1])} : _E.raise("invalid input, expecting JSArray but got " + v);
    }));
+   var clickAnim = A2(Signal._op["<~"],
+   cycling,
+   cycledClickAnim);
    var proceedRequest = Native.Ports.portIn("proceedRequest",
    Native.Ports.incomingSignal(function (v) {
       return typeof v === "boolean" ? v : _E.raise("invalid input, expecting JSBoolean but got " + v);
@@ -573,6 +589,8 @@ Elm.Engine.make = function (_elm) {
    _elm.Engine.values = {_op: _op
                         ,initialInterpreterState: initialInterpreterState
                         ,clock: clock
+                        ,cycling: cycling
+                        ,clickAnim: clickAnim
                         ,interpretForward: interpretForward
                         ,interpret: interpret
                         ,makeProceedRequest: makeProceedRequest
@@ -1058,7 +1076,7 @@ Elm.Engine.Background.make = function (_elm) {
          {case "_Tuple2":
             return _U.cmp(0,_v0._0) < 1;}
          _E.Case($moduleName,
-         "on line 36, column 22 to 28");
+         "on line 34, column 22 to 28");
       }();
    };
    var chooseForm = function (_v4) {
@@ -1079,13 +1097,8 @@ Elm.Engine.Background.make = function (_elm) {
                  front);
               }();}
          _E.Case($moduleName,
-         "between lines 30 and 34");
+         "between lines 28 and 32");
       }();
-   };
-   var cycle = function (lst) {
-      return _U.cmp(List.length(lst),
-      2) > -1 ? _L.append(lst,
-      List.tail(List.reverse(List.tail(lst)))) : lst;
    };
    var halfFpsNum = Engine.Config.fpsNum / 2;
    var imgToElement = F2(function (dict,
@@ -1112,10 +1125,10 @@ Elm.Engine.Background.make = function (_elm) {
                     return _U.cmp(_v8._1,
                       1) < 1 ? -1 : Basics.max(-1)(count - 1);}
                  _E.Case($moduleName,
-                 "between lines 25 and 28");
+                 "between lines 23 and 26");
               }();}
          _E.Case($moduleName,
-         "between lines 25 and 28");
+         "between lines 23 and 26");
       }();
    });
    var ClearCanvas = function (a) {
@@ -1133,11 +1146,11 @@ Elm.Engine.Background.make = function (_elm) {
          {case "ClearCanvas":
             return _L.fromArray([Graphics.Collage.toForm(Graphics.Element.empty)]);
             case "NewImageSet":
-            return cycle(A2(List.map,
+            return A2(List.map,
               imgToElement(dict),
-              c._0));}
+              c._0);}
          _E.Case($moduleName,
-         "between lines 20 and 22");
+         "between lines 18 and 20");
       }();
    });
    var backgroundForm = F5(function (clickAnim,
@@ -1207,7 +1220,6 @@ Elm.Engine.Background.make = function (_elm) {
    _elm.Engine.Background.values = {_op: _op
                                    ,imgToElement: imgToElement
                                    ,halfFpsNum: halfFpsNum
-                                   ,cycle: cycle
                                    ,images: images
                                    ,counter: counter
                                    ,chooseForm: chooseForm

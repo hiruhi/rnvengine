@@ -2,7 +2,7 @@ window.onload=function(){
     $("<div>").load(scenariofile,null,function(){
 	var dummyCP = {'name': "", 'imageInfo': {'url': "", 'width':0, 'height':0}}
 	$("#gamescreen:first").each(function(index,domElm){
-	    engine=Elm.embed(Elm.Engine, domElm, {newScript: [], clickAnim: [], showPicts: [],changePict: dummyCP, fadeOut: 0, proceedRequest: false, canvasSize: {width: 0, height:0}, isModal: false, preloadImages: [], clearCanvas: {width:WIDTH, height:HEIGHT}, loading: true, face1direct: false, shaking: false});
+	    engine=Elm.embed(Elm.Engine, domElm, {newScript: [], cycledClickAnim: [[],true], showPicts: [],changePict: dummyCP, fadeOut: 0, proceedRequest: false, canvasSize: {width: 0, height:0}, isModal: false, preloadImages: [], clearCanvas: {width:WIDTH, height:HEIGHT}, loading: true, face1direct: false, shaking: false});
 	});
 	startLoading();
 

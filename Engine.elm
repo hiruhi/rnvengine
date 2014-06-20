@@ -19,7 +19,7 @@ port changePict: Signal {name: String, imageInfo: {url: String, width: Int, heig
 port fadeOut: Signal Int
 port isModal: Signal Bool
 port proceedRequest: Signal Bool
-port clickAnim: Signal [{url:String, width: Int, height: Int}]
+port cycledClickAnim: Signal ([{url:String, width: Int, height: Int}],Bool)
 port clearCanvas: Signal {width:Int, height:Int}
 port preloadImages: Signal [{url:String, width: Int, height: Int}]
 port canvasSize: Signal {width: Int, height: Int}
@@ -61,6 +61,10 @@ data EffectCommand = ShowPicts [VisibleObject]
 initialInterpreterState = {script="", scriptsLeft=[], goForward=False, clickCount = 0, directface1=False}
 
 clock = always Clock <~ (fps fpsNum)
+
+cycling (lst,b) = if b || length lst < 2 then lst else lst ++ (tail <| reverse <| tail lst)
+
+clickAnim = cycling <~ cycledClickAnim
 
 interpretForward s =
   case s.scriptsLeft of
