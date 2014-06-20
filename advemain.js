@@ -10,7 +10,6 @@ window.onload=function(){
 	thisScript=scenariofile;
 	thisSection="#begin";
 	var maincode = expandMacro(scriptview.text()).replace(/｜([^《]+)《([^》]+)》/g,'<ruby>$1<rp>(</rp><rt>$2</rt><rp>)</rp></ruby>').replace(/ｖ/g,"<span style='color:red'>&hearts;</span>").split("\n");
-	console.log(maincode);
 	scriptview.empty();
 
 	var tempspace=$("#hiddenplace");
