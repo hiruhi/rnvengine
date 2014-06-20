@@ -9,6 +9,7 @@ import Engine.Background (backgroundForm)
 import Engine.FadeOut (fadingEffect)
 import Color
 import Engine.VisualObjects (visualObjectsLayer)
+import Debug
 
 port face1direct: Signal Bool
 port shaking : Signal Bool
@@ -86,26 +87,29 @@ userAccess = dropWhen loading (ProceedRequest False) <|
                      dropWhen isModal (FaceOneButton False) <| FaceOneButton <~ keepIf id False P.face1button
                     ]
 
-
 checkAndLoad img dict =
   case D.get img.url dict of
     Just _ -> dict
-    Nothing -> D.insert img.url (opacity 0.0 <| fittedImage img.width img.height img.url) dict
+    Nothing -> D.insert img.url (form <| FImage img.width img.height (0,0) img.url) dict
 
 
 load lst dict = foldr (\e d -> if e.url == "" then d else checkAndLoad e d) dict lst
 
-changeDict : Signal (D.Dict String Element)
-changeDict = foldp load D.empty preloadImages
+-- changeDict : Signal (D.Dict String Form)
+-- changeDict = foldp load D.empty preloadImages
 
+-- createHiddenScreen dict = D.values dict
+-- hiddenScreen = createHiddenScreen <~ changeDict
 
-createHiddenScreen dict = D.values dict
+render canvas fading elements = 
+    let w = toFloat canvas.width
+        h = toFloat canvas.height
+        hw = w * 0.5
+        hh = h * 0.5
+        bs = alpha fading <| filled Color.black <| rect w h
+    in collage canvas.width canvas.height <| elements ++ [bs]
 
-hiddenScreen = createHiddenScreen <~ changeDict
-
-render canvas fading elements = layers <| spacer canvas.width canvas.height :: map (opacity fading) elements
-
-main = render <~ canvasSize ~ (fadingEffect fadeOut clearCanvas clock) ~ combine [backgroundForm clickAnim clearCanvas P.face1button clock changeDict, visualObjectsLayer showPicts changePict clearCanvas changeDict canvasSize]
+main = render <~ canvasSize ~ (fadingEffect fadeOut clearCanvas clock) ~ ((::) <~ backgroundForm clickAnim clearCanvas P.face1button clock  ~ visualObjectsLayer showPicts changePict clearCanvas canvasSize)
 
 port jumpRequest : Signal Bool
 port jumpRequest = keepIf id False P.face2button

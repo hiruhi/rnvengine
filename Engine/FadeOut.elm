@@ -13,9 +13,9 @@ comp e s =
   case e of
     ClearCanvas -> initialState
     Clock -> {s | count <- max (s.count - 1) -1}
-    Request sec -> {efun = E.ease E.linear E.number 0.0 1.0 (toFloat <| sec*fpsNum), count = sec*fpsNum + 1}
+    Request sec -> {efun = E.ease E.linear E.number 1.0 0.0 (toFloat <| sec*fpsNum), count = sec*fpsNum + 1}
 
-initialState = {count = 0, efun = always 1.0}
+initialState = {count = 0, efun = always 0.0}
 
 isCounting s = s.count >= 0
 
