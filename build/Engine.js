@@ -496,20 +496,24 @@ Elm.Engine.make = function (_elm) {
    Native.Ports.incomingSignal(function (v) {
       return typeof v === "object" && "name" in v && "imageInfo" in v ? {_: {}
                                                                         ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _E.raise("invalid input, expecting JSString but got " + v.name)
-                                                                        ,imageInfo: typeof v.imageInfo === "object" && "url" in v.imageInfo && "width" in v.imageInfo && "height" in v.imageInfo ? {_: {}
-                                                                                                                                                                                                   ,url: typeof v.imageInfo.url === "string" || typeof v.imageInfo.url === "object" && v.imageInfo.url instanceof String ? v.imageInfo.url : _E.raise("invalid input, expecting JSString but got " + v.imageInfo.url)
-                                                                                                                                                                                                   ,width: typeof v.imageInfo.width === "number" ? v.imageInfo.width : _E.raise("invalid input, expecting JSNumber but got " + v.imageInfo.width)
-                                                                                                                                                                                                   ,height: typeof v.imageInfo.height === "number" ? v.imageInfo.height : _E.raise("invalid input, expecting JSNumber but got " + v.imageInfo.height)} : _E.raise("invalid input, expecting JSObject [\"url\",\"width\",\"height\"] but got " + v.imageInfo)} : _E.raise("invalid input, expecting JSObject [\"name\",\"imageInfo\"] but got " + v);
+                                                                        ,imageInfo: _U.isJSArray(v.imageInfo) ? _L.fromArray(v.imageInfo.map(function (v) {
+                                                                           return typeof v === "object" && "url" in v && "width" in v && "height" in v ? {_: {}
+                                                                                                                                                         ,url: typeof v.url === "string" || typeof v.url === "object" && v.url instanceof String ? v.url : _E.raise("invalid input, expecting JSString but got " + v.url)
+                                                                                                                                                         ,width: typeof v.width === "number" ? v.width : _E.raise("invalid input, expecting JSNumber but got " + v.width)
+                                                                                                                                                         ,height: typeof v.height === "number" ? v.height : _E.raise("invalid input, expecting JSNumber but got " + v.height)} : _E.raise("invalid input, expecting JSObject [\"url\",\"width\",\"height\"] but got " + v);
+                                                                        })) : _E.raise("invalid input, expecting JSArray but got " + v.imageInfo)} : _E.raise("invalid input, expecting JSObject [\"name\",\"imageInfo\"] but got " + v);
    }));
    var showPicts = Native.Ports.portIn("showPicts",
    Native.Ports.incomingSignal(function (v) {
       return _U.isJSArray(v) ? _L.fromArray(v.map(function (v) {
          return typeof v === "object" && "name" in v && "imageInfo" in v ? {_: {}
                                                                            ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _E.raise("invalid input, expecting JSString but got " + v.name)
-                                                                           ,imageInfo: typeof v.imageInfo === "object" && "url" in v.imageInfo && "width" in v.imageInfo && "height" in v.imageInfo ? {_: {}
-                                                                                                                                                                                                      ,url: typeof v.imageInfo.url === "string" || typeof v.imageInfo.url === "object" && v.imageInfo.url instanceof String ? v.imageInfo.url : _E.raise("invalid input, expecting JSString but got " + v.imageInfo.url)
-                                                                                                                                                                                                      ,width: typeof v.imageInfo.width === "number" ? v.imageInfo.width : _E.raise("invalid input, expecting JSNumber but got " + v.imageInfo.width)
-                                                                                                                                                                                                      ,height: typeof v.imageInfo.height === "number" ? v.imageInfo.height : _E.raise("invalid input, expecting JSNumber but got " + v.imageInfo.height)} : _E.raise("invalid input, expecting JSObject [\"url\",\"width\",\"height\"] but got " + v.imageInfo)} : _E.raise("invalid input, expecting JSObject [\"name\",\"imageInfo\"] but got " + v);
+                                                                           ,imageInfo: _U.isJSArray(v.imageInfo) ? _L.fromArray(v.imageInfo.map(function (v) {
+                                                                              return typeof v === "object" && "url" in v && "width" in v && "height" in v ? {_: {}
+                                                                                                                                                            ,url: typeof v.url === "string" || typeof v.url === "object" && v.url instanceof String ? v.url : _E.raise("invalid input, expecting JSString but got " + v.url)
+                                                                                                                                                            ,width: typeof v.width === "number" ? v.width : _E.raise("invalid input, expecting JSNumber but got " + v.width)
+                                                                                                                                                            ,height: typeof v.height === "number" ? v.height : _E.raise("invalid input, expecting JSNumber but got " + v.height)} : _E.raise("invalid input, expecting JSObject [\"url\",\"width\",\"height\"] but got " + v);
+                                                                           })) : _E.raise("invalid input, expecting JSArray but got " + v.imageInfo)} : _E.raise("invalid input, expecting JSObject [\"name\",\"imageInfo\"] but got " + v);
       })) : _E.raise("invalid input, expecting JSArray but got " + v);
    }));
    var main = A2(Signal._op["~"],
@@ -1282,11 +1286,47 @@ Elm.Engine.VisualObjects.make = function (_elm) {
       _L.fromArray([]),
       s.vo);
    };
+   var halve = function (i) {
+      return Basics.toFloat(i) * 0.5;
+   };
    var imgToElement = F2(function (dict,
    x) {
-      return A2(Dict.getOrFail,
-      x.imageInfo.url,
-      dict);
+      return function () {
+         var _v0 = x.imageInfo;
+         switch (_v0.ctor)
+         {case "::": return function () {
+                 var mh = _v0._0.height;
+                 var mw = halve(_v0._0.width);
+                 var _raw = List.map(function (info) {
+                    return A2(Dict.getOrFail,
+                    info.url,
+                    dict);
+                 })(x.imageInfo),
+                 $ = _raw.ctor === "::" ? _raw : _E.Case($moduleName,
+                 "on line 25, column 54 to 109"),
+                 base = $._0,
+                 accs = $._1;
+                 return {ctor: "::"
+                        ,_0: base
+                        ,_1: List.map(function (_v3) {
+                           return function () {
+                              switch (_v3.ctor)
+                              {case "_Tuple2":
+                                 return A2(Graphics.Collage.move,
+                                   {ctor: "_Tuple2"
+                                   ,_0: halve(_v3._0.width) - mw
+                                   ,_1: halve(mh - _v3._0.height)},
+                                   _v3._1);}
+                              _E.Case($moduleName,
+                              "on line 28, column 65 to 122");
+                           }();
+                        })(A2(List.zip,_v0._1,accs))};
+              }();
+            case "[]":
+            return _L.fromArray([]);}
+         _E.Case($moduleName,
+         "between lines 23 and 29");
+      }();
    });
    var initialState = {_: {}
                       ,canvasSize: {_: {}
@@ -1341,7 +1381,9 @@ Elm.Engine.VisualObjects.make = function (_elm) {
             return _U.replace([["vo"
                                ,A3(Dict.insert,
                                c._0.name,
-                               A2(imgToElement,s.dict,c._0),
+                               Graphics.Collage.group(A2(imgToElement,
+                               s.dict,
+                               c._0)),
                                s.vo)]],
               s);
             case "ClearCanvas":
@@ -1376,12 +1418,14 @@ Elm.Engine.VisualObjects.make = function (_elm) {
                                     ,newMoves]
                                    ,["vo"
                                     ,Dict.fromList(List.zip(names)(A2(List.map,
-                                    imgToElement(s.dict),
+                                    function ($) {
+                                       return Graphics.Collage.group(imgToElement(s.dict)($));
+                                    },
                                     c._0)))]],
                  s);
               }();}
          _E.Case($moduleName,
-         "between lines 24 and 34");
+         "between lines 33 and 43");
       }();
    });
    var visualObjectsLayer = F5(function (showPicts,
@@ -1411,6 +1455,7 @@ Elm.Engine.VisualObjects.make = function (_elm) {
    });
    _elm.Engine.VisualObjects.values = {_op: _op
                                       ,initialState: initialState
+                                      ,halve: halve
                                       ,imgToElement: imgToElement
                                       ,makeVisualObjects: makeVisualObjects
                                       ,moveForms: moveForms

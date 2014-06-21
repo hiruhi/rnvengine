@@ -1,6 +1,6 @@
 window.onload=function(){
     $("<div>").load(scenariofile,null,function(){
-	var dummyCP = {'name': "", 'imageInfo': {'url': "", 'width':0, 'height':0}}
+	var dummyCP = {'name': "", 'imageInfo': []}
 	$("#gamescreen:first").each(function(index,domElm){
 	    engine=Elm.embed(Elm.Engine, domElm, {newScript: [], cycledClickAnim: [[],true], showPicts: [],changePict: dummyCP, fadeOut: 0, proceedRequest: false, canvasSize: {width: 0, height:0}, isModal: false, preloadImages: [], clearCanvas: {width:WIDTH, height:HEIGHT}, loading: true, face1direct: false, shaking: false});
 	});
@@ -40,8 +40,12 @@ window.onload=function(){
 
         function startPreloadImages(){
 	    var preloads = new Array;
-	    for(key in assets.images){
-		preloads.push(assets.images[key]);
+	    for(key in assets.bgimages){
+		preloads.push(assets.bgimages[key]);
+	    }
+	    for(key in assets.fgimages){
+                for(i in assets.fgimages[key])
+		    preloads.push(assets.fgimages[key][i]);
 	    }
 	    preloadImages(preloads,0,preloads.length);
         }

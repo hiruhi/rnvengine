@@ -14,8 +14,8 @@ import Debug
 port face1direct: Signal Bool
 port shaking : Signal Bool
 port newScript: Signal [String]
-port showPicts: Signal [{name: String, imageInfo: {url: String, width: Int, height: Int}}]
-port changePict: Signal {name: String, imageInfo: {url: String, width: Int, height: Int}}
+port showPicts: Signal [{name: String, imageInfo: [{url: String, width: Int, height: Int}]}]
+port changePict: Signal {name: String, imageInfo: [{url: String, width: Int, height: Int}]}
 port fadeOut: Signal Int
 port isModal: Signal Bool
 port proceedRequest: Signal Bool

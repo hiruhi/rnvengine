@@ -116,7 +116,7 @@ function interpretOneStep(t){
 function clickAnim(picts,cycled){
     if(cycled == null) cycled = true;
     for(key in picts){
-	picts[key]=assets.images[picts[key]]
+	picts[key]=assets.bgimages[picts[key]]
     }
     engine.ports.cycledClickAnim.send([picts,cycled]);
     engine.ports.proceedRequest.send(true);
@@ -126,14 +126,14 @@ function clickAnimOnly(picts,cycled){
     if(cycled == null) cycled = true;
     hideScripts();
     for(key in picts){
-	picts[key]=assets.images[picts[key]]
+	picts[key]=assets.bgimages[picts[key]]
     }
     engine.ports.cycledClickAnim.send([picts,cycled]);
     engine.ports.isModal.send(true);
 }
 
 function show(f){
-    engine.ports.cycledClickAnim.send([[assets.images[f]],true]);
+    engine.ports.cycledClickAnim.send([[assets.bgimages[f]],true]);
     engine.ports.proceedRequest.send(true);
 }
 
@@ -217,14 +217,14 @@ function playStop(ids){
 function showStandPicts(lst){
     var rcd = new Array
     for(key in lst){
-	rcd.push({name: key, imageInfo: assets.images[lst[key]]});
+	rcd.push({name: key, imageInfo: assets.fgimages[lst[key]]});
     }
     engine.ports.showPicts.send(rcd);
     engine.ports.proceedRequest.send(true);
 }
 
 function changeStandPict(n,id){
-    engine.ports.changePict.send({name: n, imageInfo: assets.images[id]})
+    engine.ports.changePict.send({name: n, imageInfo: assets.fgimages[id]})
     engine.ports.proceedRequest.send(true);
 }
 
